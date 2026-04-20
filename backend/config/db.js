@@ -9,10 +9,12 @@ const connectDB = async () => {
 
     // Set mongoose connection options for Vercel
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
       retryWrites: true,
       w: 'majority',
+      maxPoolSize: 1,
     });
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
