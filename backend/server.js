@@ -28,17 +28,21 @@ connectDB().then(() => {
 const allowedOrigins = [
   process.env.CLIENT_URL,
   'http://localhost:5173',
-  'https://frontend-smoky-eta-27.vercel.app',
-  'https://frontend-mohan-yadavs-projects-d2557d11.vercel.app',
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    if (!origin) return callback(null, true);
+    // Allow localhost and all *.vercel.app subdomains for this project
+    if (
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/[a-z0-9-]+-mohan-yadavs-projects-d2557d11\.vercel\.app$/.test(origin) ||
+      origin === 'https://mohanyadav.vercel.app' ||
+      origin === 'https://frontend-smoky-eta-27.vercel.app'
+    ) {
+      return callback(null, true);
     }
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 }));

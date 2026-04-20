@@ -6,3 +6,5 @@ frontend/.env
 dist/
 .DS_Store
 *.log
+
+.vercel
