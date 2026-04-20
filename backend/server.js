@@ -15,8 +15,14 @@ const profileRoutes = require('./routes/profileRoutes');
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
+// Initialize connection pool on startup
+let dbConnected = false;
+connectDB().then(() => {
+  dbConnected = true;
+}).catch(err => {
+  console.error('Initial DB connection failed:', err);
+  dbConnected = false;
+});
 
 // Middleware
 app.use(cors({
@@ -26,6 +32,14 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
+
+// Check DB connection before routes
+app.use((req, res, next) => {
+  if (!dbConnected && process.env.NODE_ENV === 'production') {
+    return res.status(503).json({ error: 'Database connection not ready' });
+  }
+  next();
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -37,12 +51,16 @@ app.use('/api/profile', profileRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Portfolio API running' });
+  res.json({ 
+    status: 'ok', 
+    message: 'Portfolio API running',
+    dbConnected: dbConnected
+  });
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err);
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
     success: false,
