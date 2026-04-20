@@ -50,9 +50,27 @@ export const getMessages = () => API.get('/contact');
 export const markRead = (id) => API.put(`/contact/${id}/read`);
 export const deleteMessage = (id) => API.delete(`/contact/${id}`);
 
-// Upload
-export const uploadFile = (formData) =>
-  API.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+// Upload — gets a Cloudinary signature from backend, then uploads directly to Cloudinary
+export const uploadFile = async (formData) => {
+  const { data: sig } = await API.post('/upload/sign');
+  const file = formData.get('file');
+
+  const cloudinaryForm = new FormData();
+  cloudinaryForm.append('file', file);
+  cloudinaryForm.append('timestamp', sig.timestamp);
+  cloudinaryForm.append('signature', sig.signature);
+  cloudinaryForm.append('api_key', sig.api_key);
+  cloudinaryForm.append('folder', sig.folder);
+
+  const resourceType = file.type.startsWith('video/') ? 'video' : 'image';
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${sig.cloud_name}/${resourceType}/upload`,
+    { method: 'POST', body: cloudinaryForm }
+  );
+  const result = await res.json();
+  if (result.error) throw new Error(result.error.message);
+  return { data: { success: true, url: result.secure_url, public_id: result.public_id, resource_type: result.resource_type } };
+};
 
 // Profile
 export const getProfile = () => API.get('/profile');
