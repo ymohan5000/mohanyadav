@@ -16,21 +16,21 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/server.js"
+      "dest": "backend/api/index.js"
     },
     {
       "src": "/(.*)",
       "dest": "frontend/dist/$1",
       "methods": ["GET", "HEAD"],
       "headers": {
-        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https://api.cloudinary.com https://*.cloudinary.com; frame-src 'self'; object-src 'none';"
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https://api.cloudinary.com https://*.cloudinary.com https://*.posthog.com https://antespirit.com; frame-src 'self'; object-src 'none';"
       }
     },
     {
       "src": "/(.*)",
       "dest": "frontend/dist/index.html",
       "headers": {
-        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https://api.cloudinary.com https://*.cloudinary.com; frame-src 'self'; object-src 'none';"
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https://api.cloudinary.com https://*.cloudinary.com https://*.posthog.com https://antespirit.com; frame-src 'self'; object-src 'none';"
       }
     }
   ]
