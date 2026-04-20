@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/dist"
+      }
+    },
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/$1",
+      "methods": ["GET", "HEAD"]
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/index.html"
+    }
+  ],
+  "env": {
+    "MONGODB_URI": "@mongodb_uri",
+    "JWT_SECRET": "@jwt_secret",
+    "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
+    "CLOUDINARY_API_KEY": "@cloudinary_api_key",
+    "CLOUDINARY_API_SECRET": "@cloudinary_api_secret",
+    "ADMIN_EMAIL": "@admin_email",
+    "ADMIN_PASSWORD": "@admin_password",
+    "CLIENT_URL": "@client_url"
+  }
+}
